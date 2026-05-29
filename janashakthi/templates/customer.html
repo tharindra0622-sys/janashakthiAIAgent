@@ -126,13 +126,26 @@
   .svc-badge.financial { background: rgba(231,76,60,0.15); color: #E74C3C; }
   .svc-badge.non-financial { background: rgba(39,174,96,0.15); color: #27AE60; }
 
-  .svc-filter-bar { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
-  .svc-filter-btn { flex: 1; min-width: 0; padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: var(--muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: all 0.18s; text-align: center; white-space: nowrap; }
-  .svc-filter-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .svc-filter-btn.active-all { background: var(--gold); color: var(--deep); border-color: var(--gold); }
-  .svc-filter-btn.active-non { background: rgba(39,174,96,0.18); color: #27AE60; border-color: #27AE60; }
-  .svc-filter-btn.active-fin { background: rgba(231,76,60,0.18); color: #E74C3C; border-color: #E74C3C; }
+  .svc-filter-bar { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+.svc-filter-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+}
+.svc-filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+.svc-filter-btn.active-all  { background: var(--gold); color: var(--deep); border-color: var(--gold); }
+.svc-filter-btn.active-non  { background: rgba(39,174,96,0.18); color: #27AE60; border-color: #27AE60; }
+.svc-filter-btn.active-fin  { background: rgba(231,76,60,0.18); color: #E74C3C; border-color: #E74C3C; }
 
+    
   .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; scroll-behavior: smooth; }
   .chat-messages::-webkit-scrollbar { width: 4px; }
   .chat-messages::-webkit-scrollbar-thumb { background: rgba(201,151,58,0.3); border-radius: 2px; }
@@ -342,10 +355,9 @@
       <div style="border-top:1px solid rgba(255,255,255,0.08);margin:0.5rem 0 0.75rem;"></div>
       <div style="font-size:0.8rem;color:var(--muted);font-weight:700;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">🛠 What do you need help with?</div>
       <div class="svc-filter-bar">
-        <button class="svc-filter-btn active-all" onclick="filterServices('all',this)">All</button>
-        <button class="svc-filter-btn" onclick="filterServices('non-financial',this)">📄 Non-Financial</button>
-        <button class="svc-filter-btn" onclick="filterServices('financial',this)">💰 Financial</button>
-      </div>
+  <button class="svc-filter-btn" onclick="filterServices('non-financial',this)">📄 Non-Financial</button>
+  <button class="svc-filter-btn" onclick="filterServices('financial',this)">💰 Financial</button>
+</div>
       <div class="service-option" data-category="non-financial" onclick="selectService('name_change')">
         <div class="icon">✏️</div>
         <div class="info"><h4>Name Change</h4><p>Update your name on your policy</p><span class="svc-badge non-financial">Non-Financial</span></div>
@@ -492,6 +504,11 @@ function showServiceStage() {
       '<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">Plan: <strong style="color:var(--text)">' + p.plan + '</strong> &nbsp;|&nbsp; Mode: <strong style="color:var(--text)">' + p.premium_mode + '</strong> &nbsp;|&nbsp; Sum Assured: <strong style="color:var(--text)">Rs. ' + Number(p.sum_assured).toLocaleString() + '</strong></div></div>';
   }).join('');
   if (customer.policies.length > 0) pl.querySelector('.policy-badge').click();
+
+  // hide all services until a category is clicked
+  document.querySelectorAll('#stage-service .service-option').forEach(function(c){
+    c.style.display = 'none';
+  });
 }
 
 function selectPolicy(pn, el) {
@@ -500,12 +517,11 @@ function selectPolicy(pn, el) {
 }
 
 function filterServices(cat, btn) {
-  document.querySelectorAll('.svc-filter-btn').forEach(function(b){ b.classList.remove('active-all','active-non','active-fin'); });
-  if (cat === 'all') btn.classList.add('active-all');
-  else if (cat === 'non-financial') btn.classList.add('active-non');
+  document.querySelectorAll('.svc-filter-btn').forEach(function(b){ b.classList.remove('active-non','active-fin'); });
+  if (cat === 'non-financial') btn.classList.add('active-non');
   else btn.classList.add('active-fin');
   document.querySelectorAll('#stage-service .service-option').forEach(function(c){
-    c.style.display = (cat === 'all' || c.dataset.category === cat) ? '' : 'none';
+    c.style.display = c.dataset.category === cat ? '' : 'none';
   });
 }
 
@@ -771,7 +787,8 @@ function showToast(msg, type) {
 function addMessage(text, type) {
   type = type || 'bot';
   var msgs = document.getElementById('chatMessages');
-  var div = document.createElement('div'); div.className = 'msg ' + type; div.textContent = text;
+  var div = document.createElement('div'); div.className = 'msg ' + type;
+  if (type === 'bot') { div.innerHTML = text.replace(/\n/g, '<br>'); } else { div.textContent = text; }
   msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
 
@@ -812,6 +829,7 @@ async function sendMessage() {
     } else { addMessage('Sorry, I could not process your message. Please try again.', 'bot'); }
   } catch(e) { removeTyping(); addMessage('Connection error. Please check your internet and try again.', 'bot'); }
 }
+
 
 function showChatStage() {
   goToStage('chat');
