@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Janashakthi Insurance PLC</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9973A;
+    --gold-light: #E8C06A;
+    --deep: #1A1A2E;
+    --navy: #16213E;
+    --card: #0F3460;
+    --surface: #1e2d4a;
+    --text: #E8EAF0;
+    --muted: #8899BB;
+    --success: #27AE60;
+    --error: #E74C3C;
+    --warning: #F39C12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--deep) 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 0 2rem;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 44px; height: 44px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); letter-spacing: 0.5px; }
+  .logo-sub { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  nav a { color: var(--muted); text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; transition: color 0.2s; }
+  nav a:hover { color: var(--gold); }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #0a1628 100%); padding: 6rem 2rem; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at center, rgba(201,151,58,0.08) 0%, transparent 60%); animation: pulse 6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.1);opacity:1} }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--gold); margin-bottom: 1rem; position: relative; }
+  .hero p { font-size: 1.1rem; color: var(--muted); max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.7; position: relative; }
+  .hero-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--deep); padding: 1rem 2.5rem; border-radius: 50px; font-size: 1rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; transition: all 0.3s; position: relative; box-shadow: 0 4px 20px rgba(201,151,58,0.4); }
+  .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,151,58,0.5); background: var(--gold-light); }
+
+  .services { padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem; }
+  .section-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+  .service-card { background: var(--surface); border: 1px solid rgba(201,151,58,0.2); border-radius: 16px; padding: 2rem; transition: all 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+  .service-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(201,151,58,0.05), transparent); opacity: 0; transition: opacity 0.3s; }
+  .service-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .service-card:hover::after { opacity: 1; }
+  .service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .service-type { font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 1rem; }
+  .financial { background: rgba(231,76,60,0.15); color: #E74C3C; }
+  .non-financial { background: rgba(39,174,96,0.15); color: #27AE60; }
+  .service-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--text); margin-bottom: 0.8rem; }
+  .service-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+  .service-docs { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .service-docs span { display: inline-block; font-size: 0.75rem; background: rgba(201,151,58,0.1); color: var(--gold); padding: 2px 8px; border-radius: 10px; margin: 2px; }
+
+  .chat-toggle { position: fixed; bottom: 2rem; right: 2rem; width: 65px; height: 65px; background: var(--gold); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 6px 25px rgba(201,151,58,0.5); transition: all 0.3s; z-index: 999; color: var(--deep); }
+  .chat-toggle:hover { transform: scale(1.1); }
+  .chat-toggle .badge { position: absolute; top: -4px; right: -4px; background: var(--error); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+
+  .chat-popup { position: fixed; bottom: 6rem; right: 2rem; width: 420px; max-height: 700px; background: var(--navy); border: 1px solid rgba(201,151,58,0.3); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 998; opacity: 0; transform: translateY(20px) scale(0.95); pointer-events: none; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .chat-popup.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+  .chat-header { background: linear-gradient(135deg, var(--card), var(--navy)); padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201,151,58,0.2); }
+  .chat-header-info { display: flex; align-items: center; gap: 10px; }
+  .agent-avatar { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; position: relative; }
+  .agent-online { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; border: 2px solid var(--navy); }
+  .agent-name { font-weight: 600; font-size: 0.95rem; }
+  .agent-status { font-size: 0.75rem; color: var(--success); }
+  .chat-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem; padding: 4px; transition: color 0.2s; }
+  .chat-close:hover { color: var(--text); }
+
+  .chat-stage { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .chat-stage.active { display: flex; }
+
+  .login-stage { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
+  .login-intro { text-align: center; padding: 1rem 0; }
+  .login-intro .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .login-intro h3 { font-family: 'Playfair Display', serif; color: var(--gold); margin-bottom: 0.5rem; }
+  .login-intro p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  .form-group input { background: var(--surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.8rem 1rem; color: var(--text); font-size: 0.9rem; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none; }
+  .form-group input:focus { border-color: var(--gold); }
+
+  .btn-primary { background: var(--gold); color: var(--deep); border: none; border-radius: 10px; padding: 0.85rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .customer-card { background: var(--surface); border: 1px solid rgba(201,151,58,0.2); border-radius: 12px; padding: 1.2rem; margin-bottom: 0.5rem; }
+  .customer-card .name { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 0.3rem; }
+  .customer-card .detail { color: var(--muted); font-size: 0.82rem; margin: 2px 0; }
+
+  .policy-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.8rem; }
+  .policy-badge { background: rgba(201,151,58,0.1); border: 1px solid rgba(201,151,58,0.3); border-radius: 8px; padding: 4px 10px; font-size: 0.78rem; color: var(--gold-light); cursor: pointer; transition: all 0.2s; }
+  .policy-badge:hover, .policy-badge.selected { background: rgba(201,151,58,0.25); border-color: var(--gold); }
+
+  .service-select-stage { padding: 1.2rem; display: flex; flex-direction: column; gap: 0.8rem; overflow-y: auto; flex: 1; }
+  .service-option { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem; cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: all 0.2s; }
+  .service-option:hover { border-color: var(--gold); background: rgba(201,151,58,0.05); }
+  .service-option .icon { font-size: 1.8rem; }
+  .service-option .info h4 { font-size: 0.95rem; margin-bottom: 3px; }
+  .service-option .info p { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+  .service-option .svc-badge { display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; margin-top: 4px; }
+  .svc-badge.financial { background: rgba(231,76,60,0.15); color: #E74C3C; }
+  .svc-badge.non-financial { background: rgba(39,174,96,0.15); color: #27AE60; }
+
+  .svc-filter-bar { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .svc-filter-btn { flex: 1; min-width: 0; padding: 6px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: var(--muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: all 0.18s; text-align: center; white-space: nowrap; }
+  .svc-filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .svc-filter-btn.active-all { background: var(--gold); color: var(--deep); border-color: var(--gold); }
+  .svc-filter-btn.active-non { background: rgba(39,174,96,0.18); color: #27AE60; border-color: #27AE60; }
+  .svc-filter-btn.active-fin { background: rgba(231,76,60,0.18); color: #E74C3C; border-color: #E74C3C; }
+
+  .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; scroll-behavior: smooth; }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(201,151,58,0.3); border-radius: 2px; }
+  .msg { max-width: 80%; padding: 0.8rem 1rem; border-radius: 14px; font-size: 0.875rem; line-height: 1.5; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .msg.bot { background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-bottom-left-radius: 4px; align-self: flex-start; color: var(--text); }
+  .msg.user { background: var(--gold); color: var(--deep); border-bottom-right-radius: 4px; align-self: flex-end; font-weight: 500; }
+  .msg.system { background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.2); color: #27AE60; align-self: center; text-align: center; font-size: 0.78rem; max-width: 95%; }
+  .msg.error-msg { background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.2); color: #E74C3C; align-self: center; text-align: center; font-size: 0.78rem; max-width: 95%; }
+  .typing-indicator { display: flex; gap: 4px; padding: 0.8rem 1rem; background: var(--surface); border-radius: 14px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; }
+  .typing-indicator span { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: typing 1.2s infinite; }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+  .chat-input-area { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 8px; background: var(--navy); }
+  .chat-input { flex: 1; background: var(--surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.7rem 1rem; color: var(--text); font-size: 0.875rem; font-family: 'DM Sans', sans-serif; resize: none; outline: none; transition: border-color 0.2s; }
+  .chat-input:focus { border-color: var(--gold); }
+  .send-btn { background: var(--gold); color: var(--deep); border: none; border-radius: 10px; width: 42px; height: 42px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; align-self: flex-end; }
+  .send-btn:hover { background: var(--gold-light); }
+
+  .doc-stage { padding: 1rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 0.8rem; }
+  .doc-stage h4 { color: var(--gold); font-size: 0.9rem; margin-bottom: 0.2rem; }
+  .doc-stage p { color: var(--muted); font-size: 0.8rem; margin-bottom: 0.8rem; }
+  .doc-upload-item { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem; transition: all 0.3s; }
+  .doc-upload-item.required { border-left: 3px solid var(--error); }
+  .doc-upload-item.optional { border-left: 3px solid var(--muted); }
+  .doc-upload-item.verified { border-left: 3px solid var(--success); border-color: rgba(39,174,96,0.3); }
+  .doc-upload-item.failed-doc { border-left: 3px solid var(--error); border-color: rgba(231,76,60,0.3); }
+  .doc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+  .doc-label { font-size: 0.85rem; font-weight: 600; }
+  .doc-badge { font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .doc-badge.req { background: rgba(231,76,60,0.2); color: var(--error); }
+  .doc-badge.opt { background: rgba(136,153,187,0.2); color: var(--muted); }
+  .doc-badge.ok { background: rgba(39,174,96,0.2); color: var(--success); }
+  .doc-badge.fail { background: rgba(231,76,60,0.2); color: var(--error); }
+  .doc-status { font-size: 0.78rem; color: var(--muted); margin-top: 0.4rem; }
+  .doc-status.verified { color: var(--success); }
+  .doc-status.failed { color: var(--error); }
+  .upload-btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,151,58,0.1); border: 1px dashed rgba(201,151,58,0.4); color: var(--gold); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .upload-btn:hover { background: rgba(201,151,58,0.2); }
+  input[type="file"] { display: none; }
+  .ai-feedback { margin-top: 0.5rem; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.78rem; line-height: 1.5; }
+  .ai-feedback.good { background: rgba(39,174,96,0.1); color: #27AE60; border: 1px solid rgba(39,174,96,0.2); }
+  .ai-feedback.bad { background: rgba(231,76,60,0.1); color: #E74C3C; border: 1px solid rgba(231,76,60,0.2); }
+
+  .submit-section { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+  .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 0.8rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.5s ease; }
+  .progress-text { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.8rem; }
+
+  .toast { position: fixed; bottom: 10rem; right: 2rem; background: var(--surface); border: 1px solid rgba(201,151,58,0.3); border-radius: 12px; padding: 1rem 1.5rem; z-index: 9999; font-size: 0.875rem; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  .toast.success { border-color: rgba(39,174,96,0.5); color: var(--success); }
+  .toast.error { border-color: rgba(231,76,60,0.5); color: var(--error); }
+
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .identity-selector { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 6px; }
+  .identity-opt { padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); font-size: 0.78rem; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+  .identity-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,151,58,0.1); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,151,58,0.3); border-radius: 3px; }
+
+  .identity-panel { margin-top: 0.8rem; background: rgba(201,151,58,0.06); border: 1px solid rgba(201,151,58,0.25); border-radius: 10px; overflow: hidden; }
+  .identity-panel-title { background: rgba(201,151,58,0.15); padding: 0.5rem 0.8rem; font-size: 0.78rem; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; text-transform: uppercase; }
+  .identity-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  .identity-table td { padding: 0.3rem 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  .identity-table td:first-child { color: var(--muted); white-space: nowrap; width: 40%; }
+  .identity-table td:last-child { color: var(--text); font-weight: 500; }
+  .identity-table tr:last-child td { border-bottom: none; }
+
+  /* Star buttons */
+  .star-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: #3a4a6b; padding: 0 3px; transition: color 0.12s, transform 0.12s; line-height: 1; }
+  .star-btn.lit { color: #f0c060; transform: scale(1.15); }
+
+  @media (max-width: 480px) { .chat-popup { width: calc(100vw - 2rem); right: 1rem; bottom: 5rem; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔥</div>
+    <div>
+      <div class="logo-text">Janashakthi</div>
+      <div class="logo-sub">Insurance PLC</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Products</a>
+    <a href="#">Claims</a>
+    <a href="/underwriter" target="_blank">Staff Login</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Your Protection, Our Promise</h1>
+  <p>Manage your insurance policies with ease. Request services, upload documents, and get real-time AI assistance — all in one place.</p>
+  <button class="hero-btn" onclick="openChat()">💬 Start a Service Request</button>
+</section>
+
+<section class="services">
+  <h2 class="section-title">Our Policy Services</h2>
+  <p class="section-sub">Click on any service to start a request through our AI assistant</p>
+  <div class="services-grid">
+    <div class="service-card" onclick="openChatWithService('name_change')">
+      <div class="service-icon">✏️</div>
+      <div class="service-type non-financial">Non-Financial</div>
+      <h3>Name Change</h3>
+      <p>Update your name on your insurance policy after a legal name change.</p>
+      <div class="service-docs"><span>Request Letter</span><span>Birth Cert / NIC / Marriage Cert</span></div>
+    </div>
+    <div class="service-card" onclick="openChatWithService('age_alteration')">
+      <div class="service-icon">📅</div>
+      <div class="service-type non-financial">Non-Financial</div>
+      <h3>Age Alteration</h3>
+      <p>Correct or update the date of birth recorded on your policy.</p>
+      <div class="service-docs"><span>Request Letter</span><span>Birth Cert / NIC / Marriage Cert</span></div>
+    </div>
+    <div class="service-card" onclick="openChatWithService('premium_mode_change')">
+      <div class="service-icon">💳</div>
+      <div class="service-type financial">Financial</div>
+      <h3>Change Payment Mode</h3>
+      <p>Switch your premium payment frequency (monthly, quarterly, annually).</p>
+      <div class="service-docs"><span>Request Letter</span><span>Outstanding Payment Bill</span></div>
+    </div>
+    <div class="service-card" onclick="openChatWithService('increase_benefits')">
+      <div class="service-icon">📈</div>
+      <div class="service-type financial">Financial</div>
+      <h3>Increase of Benefits</h3>
+      <p>Enhance your coverage amount with income-based benefit upgrades.</p>
+      <div class="service-docs"><span>Request Letter</span><span>PEP / DGF Form</span><span>Income Proof (Optional)</span></div>
+    </div>
+  </div>
+</section>
+
+<button class="chat-toggle" onclick="toggleChat()">
+  💬
+  <span class="badge" id="chatBadge" style="display:none">1</span>
+</button>
+
+<div class="chat-popup" id="chatPopup">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="agent-avatar">🤖<div class="agent-online"></div></div>
+      <div>
+        <div class="agent-name">JanashakthiCare — AI Assistant</div>
+        <div class="agent-status">● Online</div>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="chat-stage active" id="stage-login">
+    <div class="login-stage">
+      <div class="login-intro">
+        <div class="icon">🛡️</div>
+        <h3>Welcome to Janashakthi</h3>
+        <p>Enter your NIC number to verify your identity and view your policies.</p>
+      </div>
+      <div class="form-group">
+        <label>NIC Number</label>
+        <input type="text" id="nicInput" placeholder="e.g. 881324008V" maxlength="12"
+          onkeydown="if(event.key==='Enter') identifyCustomer()">
+      </div>
+      <button class="btn-primary" onclick="identifyCustomer()" id="loginBtn">Send Verification Code →</button>
+      <div id="loginError" style="color:var(--error);font-size:0.82rem;text-align:center;display:none;"></div>
+    </div>
+  </div>
+
+  <!-- OTP -->
+  <div class="chat-stage" id="stage-otp">
+    <div class="login-stage">
+      <div class="login-intro">
+        <div class="icon">📧</div>
+        <h3>Verify Your Identity</h3>
+        <p id="otpDesc">A 6-digit code has been sent to your registered email.</p>
+      </div>
+      <div class="form-group">
+        <label>Enter Verification Code</label>
+        <input type="text" id="otpInput" placeholder="e.g. 123456" maxlength="6"
+          style="letter-spacing:6px;font-size:1.4rem;font-weight:700;text-align:center;"
+          onkeydown="if(event.key==='Enter') verifyOtp()">
+      </div>
+      <button class="btn-primary" onclick="verifyOtp()" id="otpBtn">Confirm Code →</button>
+      <p style="font-size:0.78rem;text-align:center;margin-top:0.75rem;color:var(--muted);">
+        Didn't receive it? <a href="#" id="resendLink" onclick="resendOtp(event)" style="color:var(--primary);text-decoration:none;font-weight:600;">Resend code</a>
+      </p>
+      <div id="otpError" style="color:var(--error);font-size:0.82rem;text-align:center;margin-top:0.5rem;display:none;"></div>
+      <div id="otpSuccess" style="color:#22c55e;font-size:0.82rem;text-align:center;margin-top:0.5rem;display:none;"></div>
+    </div>
+  </div>
+
+  <!-- SERVICE SELECTION -->
+  <div class="chat-stage" id="stage-service">
+    <div class="service-select-stage">
+      <div id="customerCard" class="customer-card"></div>
+      <div style="margin-bottom:0.75rem;">
+        <div style="font-size:0.8rem;color:var(--muted);font-weight:700;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em;">📋 Your Policies</div>
+        <div id="policyList" class="policy-list"></div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);margin:0.5rem 0 0.75rem;"></div>
+      <div style="font-size:0.8rem;color:var(--muted);font-weight:700;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">🛠 What do you need help with?</div>
+      <div class="svc-filter-bar">
+        <button class="svc-filter-btn active-all" onclick="filterServices('all',this)">All</button>
+        <button class="svc-filter-btn" onclick="filterServices('non-financial',this)">📄 Non-Financial</button>
+        <button class="svc-filter-btn" onclick="filterServices('financial',this)">💰 Financial</button>
+      </div>
+      <div class="service-option" data-category="non-financial" onclick="selectService('name_change')">
+        <div class="icon">✏️</div>
+        <div class="info"><h4>Name Change</h4><p>Update your name on your policy</p><span class="svc-badge non-financial">Non-Financial</span></div>
+      </div>
+      <div class="service-option" data-category="non-financial" onclick="selectService('age_alteration')">
+        <div class="icon">📅</div>
+        <div class="info"><h4>Age Alteration</h4><p>Correct your date of birth on record</p><span class="svc-badge non-financial">Non-Financial</span></div>
+      </div>
+      <div class="service-option" data-category="financial" onclick="selectService('premium_mode_change')">
+        <div class="icon">💳</div>
+        <div class="info"><h4>Change Payment Mode</h4><p>Switch your premium payment frequency</p><span class="svc-badge financial">Financial</span></div>
+      </div>
+      <div class="service-option" data-category="financial" onclick="selectService('increase_benefits')">
+        <div class="icon">📈</div>
+        <div class="info"><h4>Increase of Benefits</h4><p>Enhance your coverage and sum assured</p><span class="svc-badge financial">Financial</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat-stage" id="stage-chat">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Type your message..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div class="chat-stage" id="stage-docs">
+    <div class="doc-stage" id="docStage"></div>
+    <div class="submit-section">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">Upload required documents to continue</div>
+      <button class="btn-primary" onclick="submitRequest()" id="submitBtn" disabled>Submit for Review</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = 'http://localhost:5001/api';
+var chatOpen = false;
+var currentStage = 'login';
+var customer = null;
+var selectedPolicy = null;
+var selectedService = null;
+var requestId = null;
+var uploadedDocs = {};
+var selectedIdentityDoc = null;
+var sessionIdentityDocs = {};
+
+var SERVICE_REQS = {
+  name_change:          { label: 'Name Change',          mandatory: ['request_letter'],                   identity_docs: ['birth_certificate','nic','marriage_certificate'], optional: [] },
+  age_alteration:       { label: 'Age Alteration',        mandatory: ['request_letter'],                   identity_docs: ['birth_certificate','nic','marriage_certificate'], optional: [] },
+  premium_mode_change:  { label: 'Change Payment Mode',   mandatory: ['request_letter','outstanding_payment'], identity_docs: [], optional: [] },
+  increase_benefits:    { label: 'Increase of Benefits',  mandatory: ['request_letter','pep_dgf_form'],    identity_docs: [], optional: ['salary_slip','bank_statement','income_tax_certificate','annual_audit_report'] }
+};
+
+var DOC_LABELS = {
+  request_letter:'Customer Request Letter', birth_certificate:'Birth Certificate', nic:'National Identity Card (NIC)',
+  marriage_certificate:'Marriage Certificate', outstanding_payment:'Outstanding Payment Bill', pep_dgf_form:'PEP / DGF Form',
+  salary_slip:'Salary Slip', bank_statement:'Bank Statement', income_tax_certificate:'Income Tax Certificate', annual_audit_report:'Annual Audit Report'
+};
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chatPopup').classList.toggle('open', chatOpen);
+  document.getElementById('chatBadge').style.display = 'none';
+}
+function openChat() { if (!chatOpen) toggleChat(); }
+function openChatWithService(s) { openChat(); if (customer && currentStage === 'service') selectService(s); }
+
+async function identifyCustomer() {
+  var nic = document.getElementById('nicInput').value.trim();
+  var btn = document.getElementById('loginBtn');
+  var err = document.getElementById('loginError');
+  if (!nic) { err.textContent = 'Please enter your NIC number.'; err.style.display = 'block'; return; }
+  btn.innerHTML = '<span class="spinner"></span> Verifying...'; btn.disabled = true; err.style.display = 'none';
+  try {
+    var res = await fetch(API + '/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nic:nic, policy_number:''}) });
+    var data = await res.json();
+    if (data.success) { customer = data.customer; await sendOtpAndShowVerify(); }
+    else { err.textContent = data.error; err.style.display = 'block'; }
+  } catch(e) { err.textContent = 'Connection error. Please try again.'; err.style.display = 'block'; }
+  finally { btn.innerHTML = 'Send Verification Code →'; btn.disabled = false; }
+}
+
+async function sendOtpAndShowVerify() {
+  var otpDesc = document.getElementById('otpDesc');
+  var resendLink = document.getElementById('resendLink');
+  document.getElementById('otpError').style.display = 'none';
+  document.getElementById('otpSuccess').style.display = 'none';
+  otpDesc.textContent = 'Sending verification code…';
+  if (resendLink) resendLink.style.pointerEvents = 'none';
+  try {
+    var res = await fetch(API + '/send-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({customer_id:customer.id, email:customer.email, full_name:customer.full_name}) });
+    var data = await res.json();
+    if (data.success) { otpDesc.textContent = 'A 6-digit code was sent to ' + data.masked_email; document.getElementById('otpInput').value = ''; goToStage('otp'); }
+    else { var e = document.getElementById('loginError'); e.textContent = data.error || 'Could not send OTP.'; e.style.display = 'block'; }
+  } catch(e) { var er = document.getElementById('loginError'); er.textContent = 'Connection error.'; er.style.display = 'block'; }
+  finally { if (resendLink) resendLink.style.pointerEvents = 'auto'; }
+}
+
+async function resendOtp(event) {
+  event.preventDefault();
+  var succEl = document.getElementById('otpSuccess');
+  document.getElementById('otpError').style.display = 'none';
+  await sendOtpAndShowVerify();
+  if (currentStage === 'otp') { succEl.textContent = '✓ A new code has been sent.'; succEl.style.display = 'block'; setTimeout(function(){ succEl.style.display = 'none'; }, 3000); }
+}
+
+async function verifyOtp() {
+  var otp = document.getElementById('otpInput').value.trim();
+  var btn = document.getElementById('otpBtn');
+  var errEl = document.getElementById('otpError');
+  var succEl = document.getElementById('otpSuccess');
+  errEl.style.display = 'none'; succEl.style.display = 'none';
+  if (!otp || otp.length < 6) { errEl.textContent = 'Please enter the 6-digit code.'; errEl.style.display = 'block'; return; }
+  btn.innerHTML = '<span class="spinner"></span> Verifying…'; btn.disabled = true;
+  try {
+    var res = await fetch(API + '/verify-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({customer_id:customer.id, otp:otp}) });
+    var data = await res.json();
+    if (data.success) { succEl.textContent = '✓ Identity verified!'; succEl.style.display = 'block'; setTimeout(showServiceStage, 600); }
+    else { errEl.textContent = data.error || 'Invalid code.'; errEl.style.display = 'block'; document.getElementById('otpInput').value = ''; document.getElementById('otpInput').focus(); }
+  } catch(e) { errEl.textContent = 'Connection error.'; errEl.style.display = 'block'; }
+  finally { btn.innerHTML = 'Confirm Code →'; btn.disabled = false; }
+}
+
+function showServiceStage() {
+  goToStage('service');
+  var card = document.getElementById('customerCard');
+  card.innerHTML = '<div class="name">✅ ' + customer.full_name + '</div>' +
+    '<div class="detail">🪪 NIC: ' + customer.nic + '</div>' +
+    '<div class="detail">📞 ' + (customer.phone||'N/A') + '</div>' +
+    '<div class="detail">🏠 ' + (customer.address||'N/A') + '</div>';
+  var pl = document.getElementById('policyList');
+  pl.innerHTML = customer.policies.map(function(p) {
+    return '<div class="policy-badge" onclick="selectPolicy(\'' + p.policy_number + '\',this)" data-policy="' + p.policy_number + '" style="display:block;padding:10px 12px;margin-bottom:6px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);transition:all 0.2s;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<span style="font-weight:700;color:var(--gold);font-size:0.9rem;">📄 ' + p.policy_number + '</span>' +
+      '<span style="font-size:0.72rem;padding:2px 8px;border-radius:20px;background:rgba(34,197,94,0.15);color:#22c55e;">' + p.status + '</span></div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">Plan: <strong style="color:var(--text)">' + p.plan + '</strong> &nbsp;|&nbsp; Mode: <strong style="color:var(--text)">' + p.premium_mode + '</strong> &nbsp;|&nbsp; Sum Assured: <strong style="color:var(--text)">Rs. ' + Number(p.sum_assured).toLocaleString() + '</strong></div></div>';
+  }).join('');
+  if (customer.policies.length > 0) pl.querySelector('.policy-badge').click();
+}
+
+function selectPolicy(pn, el) {
+  document.querySelectorAll('.policy-badge').forEach(function(b){ b.classList.remove('selected'); });
+  el.classList.add('selected'); selectedPolicy = pn;
+}
+
+function filterServices(cat, btn) {
+  document.querySelectorAll('.svc-filter-btn').forEach(function(b){ b.classList.remove('active-all','active-non','active-fin'); });
+  if (cat === 'all') btn.classList.add('active-all');
+  else if (cat === 'non-financial') btn.classList.add('active-non');
+  else btn.classList.add('active-fin');
+  document.querySelectorAll('#stage-service .service-option').forEach(function(c){
+    c.style.display = (cat === 'all' || c.dataset.category === cat) ? '' : 'none';
+  });
+}
+
+async function selectService(sk) {
+  if (!selectedPolicy) { showToast('Please select a policy first.', 'error'); return; }
+  selectedService = sk;
+  var res = await fetch(API + '/request/create', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({customer_id:customer.id, policy_number:selectedPolicy, service_type:sk}) });
+  var data = await res.json();
+  if (data.success) { requestId = data.request_id; showDocStage(sk); }
+}
+
+function showDocStage(sk) {
+  goToStage('docs');
+  var req = SERVICE_REQS[sk];
+  var container = document.getElementById('docStage');
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.3rem">' +
+    '<h4>📋 ' + req.label + ' — Document Upload</h4>' +
+    '<button onclick="showChatStage()" style="background:rgba(201,151,58,0.15);border:1px solid rgba(201,151,58,0.4);color:var(--gold);padding:4px 10px;border-radius:8px;font-size:0.75rem;cursor:pointer;">💬 Ask JanashakthiCare</button></div>' +
+    '<p>Request ID: <strong style="color:var(--gold)">#' + requestId + '</strong> | Policy: <strong style="color:var(--gold)">' + selectedPolicy + '</strong></p>';
+  req.mandatory.forEach(function(d){ html += buildDocUploader(d,'required'); });
+  if (req.identity_docs.length > 0) {
+    html += '<div class="doc-upload-item required" id="identity-container">' +
+      '<div class="doc-header"><span class="doc-label">🪪 Identity Document</span><span class="doc-badge req">Required (1 of 3)</span></div>' +
+      '<p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem">Upload ONE of the following:</p>' +
+      '<div class="identity-selector" id="identitySelector">' +
+      req.identity_docs.map(function(d){ return '<div class="identity-opt" onclick="selectIdentityDoc(\'' + d + '\',this)">' + DOC_LABELS[d] + '</div>'; }).join('') +
+      '</div><div id="identity-upload-area" style="margin-top:0.8rem;display:none">' +
+      '<input type="file" id="file-identity" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(\'identity\',this)">' +
+      '<label for="file-identity" class="upload-btn">📎 Choose File</label>' +
+      '<div class="doc-status" id="status-identity">No file selected</div>' +
+      '<div id="feedback-identity"></div></div></div>';
+  }
+  if (req.optional.length > 0) {
+    html += '<div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;font-weight:600;text-transform:uppercase;letter-spacing:1px">Optional Documents</div>';
+    req.optional.forEach(function(d){ html += buildDocUploader(d,'optional'); });
+  }
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function buildDocUploader(dt, type) {
+  var isOpt = type === 'optional';
+  return '<div class="doc-upload-item ' + type + '" id="doc-item-' + dt + '">' +
+    '<div class="doc-header"><span class="doc-label">' + getDocIcon(dt) + ' ' + DOC_LABELS[dt] + '</span>' +
+    '<span class="doc-badge ' + (isOpt?'opt':'req') + '">' + (isOpt?'Optional':'Required') + '</span></div>' +
+    '<input type="file" id="file-' + dt + '" accept=".pdf,.jpg,.jpeg,.png" onchange="handleUpload(\'' + dt + '\',this)">' +
+    '<label for="file-' + dt + '" class="upload-btn">📎 Choose File</label>' +
+    '<div class="doc-status" id="status-' + dt + '">No file selected</div>' +
+    '<div id="feedback-' + dt + '"></div></div>';
+}
+
+function getDocIcon(t) {
+  return {request_letter:'📝',birth_certificate:'📜',nic:'🪪',marriage_certificate:'💍',outstanding_payment:'🧾',pep_dgf_form:'📋',salary_slip:'💰',bank_statement:'🏦',income_tax_certificate:'📊',annual_audit_report:'📁'}[t] || '📄';
+}
+
+function selectIdentityDoc(dt, el) {
+  document.querySelectorAll('.identity-opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected'); selectedIdentityDoc = dt;
+  document.getElementById('identity-upload-area').style.display = 'block';
+}
+
+async function handleUpload(docType, inputEl) {
+  var file = inputEl.files[0]; if (!file) return;
+  var actualDocType = docType === 'identity' ? selectedIdentityDoc : docType;
+  var statusEl  = document.getElementById('status-' + docType);
+  var feedbackEl = document.getElementById('feedback-' + docType);
+  var itemEl    = document.getElementById('doc-item-' + docType) || document.getElementById('identity-container');
+  statusEl.textContent = '🔄 Verifying with AI...'; statusEl.className = 'doc-status'; feedbackEl.innerHTML = '';
+  var formData = new FormData();
+  formData.append('file', file); formData.append('doc_type', actualDocType);
+  formData.append('request_id', requestId); formData.append('policy_number', selectedPolicy);
+  formData.append('customer_nic', customer.nic);
+  try {
+    var res = await fetch(API + '/document/upload', {method:'POST', body:formData});
+    var data = await res.json();
+    if (data.ai_verified) {
+      statusEl.textContent = '✅ Verified — ' + file.name; statusEl.className = 'doc-status verified';
+      itemEl.className = itemEl.className.replace('required','').replace('optional','') + ' verified';
+      uploadedDocs[docType] = {doc_id:data.doc_id, verified:true, doc_type:actualDocType, identity_data:data.identity_data||null};
+      if (data.identity_data) {
+        sessionIdentityDocs[actualDocType] = data.identity_data;
+        feedbackEl.innerHTML = '<div class="ai-feedback good">✅ ' + data.feedback + '</div>' + buildIdentityPanel(data.identity_data);
+      } else { feedbackEl.innerHTML = '<div class="ai-feedback good">✅ ' + data.feedback + '</div>'; }
+      var badge = itemEl.querySelector('.doc-badge');
+      if (badge) { badge.className = 'doc-badge ok'; badge.textContent = 'Verified'; }
+    } else {
+      statusEl.textContent = '❌ Verification failed'; statusEl.className = 'doc-status failed';
+      itemEl.className = itemEl.className + ' failed-doc';
+      feedbackEl.innerHTML = '<div class="ai-feedback bad">❌ ' + data.feedback + '</div>';
+      delete uploadedDocs[docType];
+      var badge2 = itemEl.querySelector('.doc-badge');
+      if (badge2) { badge2.className = 'doc-badge fail'; badge2.textContent = 'Failed'; }
+    }
+  } catch(e) { statusEl.textContent = '⚠️ Upload error. Try again.'; statusEl.className = 'doc-status failed'; }
+  updateProgress();
+}
+
+function buildIdentityPanel(idata) {
+  if (!idata) return '';
+  var dt = idata.doc_type || idata.document_type || '';
+  function nm(f) { if (!f || typeof f !== 'object') return f||'—'; var p=Object.values(f).filter(function(v){return v&&String(v).toLowerCase()!=='null'&&String(v).toLowerCase()!=='none';}); return p.length?p.join(' / '):'—'; }
+  function v(k) { var val=idata[k]; return val&&String(val).toLowerCase()!=='null'&&String(val).toLowerCase()!=='none'?val:'—'; }
+  var rows = '';
+  if (dt === 'nic') {
+    var dec = idata.nic_decoded || {};
+    rows = '<tr><td>🪪 NIC Number</td><td><strong>' + v('nic_number') + '</strong></td></tr><tr><td>👤 Full Name</td><td>' + nm(idata.full_name) + '</td></tr><tr><td>📅 Date of Birth</td><td>' + v('date_of_birth') + '</td></tr><tr><td>⚧ Sex</td><td>' + v('sex') + '</td></tr><tr><td>🏠 Address</td><td>' + nm(idata.address) + '</td></tr><tr><td>📋 Issue Date</td><td>' + v('issue_date') + '</td></tr><tr><td>📍 Place of Birth</td><td>' + v('place_of_birth') + '</td></tr><tr><td>🩸 Blood Group</td><td>' + v('blood_group') + '</td></tr>' + (dec.decoded_birth_year?'<tr><td>🔐 NIC Decoded</td><td>Born '+dec.decoded_birth_year+' | '+(dec.decoded_sex||'?')+' | '+(dec.decoded_dob||'')+'</td></tr>':'');
+    return '<div class="identity-panel"><div class="identity-panel-title">🇱🇰 NIC — Extracted Data</div><table class="identity-table">' + rows + '</table></div>';
+  } else if (dt === 'birth_certificate') {
+    rows = '<tr><td>👤 Full Name</td><td>' + nm(idata.full_name) + '</td></tr><tr><td>📅 Date of Birth</td><td>' + v('date_of_birth') + '</td></tr><tr><td>📍 Place of Birth</td><td>' + nm(idata.place_of_birth) + '</td></tr><tr><td>⚧ Sex</td><td>' + v('sex') + '</td></tr><tr><td>👨 Father</td><td>' + nm(idata.father_name) + '</td></tr><tr><td>👩 Mother</td><td>' + nm(idata.mother_name) + '</td></tr><tr><td>🗺 District</td><td>' + nm(idata.district) + '</td></tr><tr><td>🔢 Reg. Number</td><td>' + v('registration_number') + '</td></tr><tr><td>📋 Date Registered</td><td>' + v('date_of_registration') + '</td></tr>';
+    return '<div class="identity-panel"><div class="identity-panel-title">🇱🇰 Birth Certificate — Extracted Data</div><table class="identity-table">' + rows + '</table></div>';
+  }
+  return '';
+}
+
+function updateProgress() {
+  var req = SERVICE_REQS[selectedService]; if (!req) return;
+  var total = req.mandatory.length; if (req.identity_docs.length > 0) total++;
+  var done = 0;
+  req.mandatory.forEach(function(d){ if (uploadedDocs[d] && uploadedDocs[d].verified) done++; });
+  if (req.identity_docs.length > 0 && uploadedDocs['identity'] && uploadedDocs['identity'].verified) done++;
+  var pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' of ' + total + ' required documents verified';
+  document.getElementById('submitBtn').disabled = done < total;
+}
+
+async function submitRequest() {
+  var btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spinner"></span> Submitting...'; btn.disabled = true;
+  try {
+    var res = await fetch(API + '/request/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({request_id:requestId})});
+    var data = await res.json();
+    if (data.success) {
+      showSuccessScreen(requestId);
+      document.querySelector('.submit-section').style.display = 'none';
+    } else {
+      showToast(data.error, 'error');
+      btn.innerHTML = 'Submit for Review'; btn.disabled = false;
+    }
+  } catch(e) {
+    showToast('Submission failed. Please try again.', 'error');
+    btn.innerHTML = 'Submit for Review'; btn.disabled = false;
+  }
+}
+
+function showSuccessScreen(reqId) {
+  var stage = document.getElementById('docStage');
+  stage.innerHTML = '';
+
+  /* outer wrapper */
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'text-align:center;padding:1.4rem 1rem';
+
+  /* top section: emoji + title + message + notification */
+  var top = document.createElement('div');
+  top.innerHTML =
+    '<div style="font-size:3rem;margin-bottom:0.5rem">🎉</div>' +
+    '<h4 style="color:var(--gold);font-family:Playfair Display,serif;margin-bottom:0.4rem;font-size:1.1rem">Request Submitted!</h4>' +
+    '<p style="color:var(--muted);font-size:0.82rem;line-height:1.6;margin-bottom:1rem">Your request <strong style="color:var(--gold)">#' + reqId + '</strong> has been submitted successfully. An underwriter will review your documents shortly.</p>' +
+    '<div style="padding:0.65rem 1rem;background:var(--surface);border-radius:10px;border:1px solid rgba(39,174,96,0.2);margin-bottom:1.2rem">' +
+    '<div style="color:var(--success);font-size:0.8rem;font-weight:600">📧 You will be notified once reviewed</div></div>';
+  wrap.appendChild(top);
+
+  /* rating box */
+  var rBox = document.createElement('div');
+  rBox.style.cssText = 'background:var(--surface);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1rem;margin-bottom:1rem';
+
+  var rTitle = document.createElement('div');
+  rTitle.style.cssText = 'font-size:0.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.7rem';
+  rTitle.textContent = '★  Rate Your Experience';
+  rBox.appendChild(rTitle);
+
+  var starRow = document.createElement('div');
+  starRow.style.cssText = 'display:flex;justify-content:center;gap:0.2rem;margin-bottom:0.5rem';
+
+  var rateMsg = document.createElement('div');
+  rateMsg.style.cssText = 'font-size:0.78rem;min-height:1.1rem;font-weight:600;color:var(--muted)';
+  rateMsg.textContent = 'Tap a star to rate';
+
+  /* contact box — hidden until 1-2 stars */
+  var contactBox = document.createElement('div');
+  contactBox.style.cssText = 'display:none;text-align:left;background:rgba(231,76,60,0.07);border:1px solid rgba(231,76,60,0.22);border-radius:14px;padding:1rem;margin-bottom:1rem';
+  contactBox.innerHTML =
+    '<div style="font-size:0.7rem;font-weight:700;color:#E74C3C;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.6rem">😔 We\'re here to help. Please contact us directly.</div>' +
+    '<div style="font-size:0.8rem;color:var(--muted);line-height:2.2">' +
+    '<div>📞 <strong style="color:var(--text)">Hotline</strong>&nbsp;&nbsp; +94 11 4 555 000</div>' +
+    '<div>✉️ <strong style="color:var(--text)">Email</strong>&nbsp;&nbsp;&nbsp;&nbsp; care@janashakthi.com</div>' +
+    '<div>🌐 <strong style="color:var(--text)">Web</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; www.janashakthi.com</div>' +
+    '<div>📍 <strong style="color:var(--text)">Address</strong>&nbsp; No. 46/12, Nawam Mawatha, Colombo 02, Sri Lanka</div>' +
+    '</div>';
+
+  var picked = 0;
+  var lbls = ['','Very Poor 😞','Poor 😕','Okay 😐','Good 😊','Excellent! 🤩'];
+  var clrs = ['','#e74c3c','#e67e22','#f1c40f','#27ae60','#27ae60'];
+
+  function refreshStars() {
+    starRow.querySelectorAll('.star-btn').forEach(function(s) {
+      var n = parseInt(s.getAttribute('data-n'));
+      s.classList.toggle('lit', n <= picked);
+    });
+  }
+
+  for (var i = 1; i <= 5; i++) {
+    (function(n) {
+      var s = document.createElement('button');
+      s.className = 'star-btn';
+      s.setAttribute('data-n', String(n));
+      s.textContent = '★';
+      s.onmouseover = function() {
+        starRow.querySelectorAll('.star-btn').forEach(function(b) {
+          b.classList.toggle('lit', parseInt(b.getAttribute('data-n')) <= n);
+        });
+      };
+      s.onmouseout = refreshStars;
+      s.onclick = function() {
+        picked = n;
+        refreshStars();
+        rateMsg.textContent = n >= 4 ? lbls[n] + ' — Thank you for your feedback!' : lbls[n];
+        rateMsg.style.color = clrs[n];
+        contactBox.style.display = n <= 3 ? 'block' : 'none';
+      };
+      starRow.appendChild(s);
+    })(i);
+  }
+
+  rBox.appendChild(starRow);
+  rBox.appendChild(rateMsg);
+  wrap.appendChild(rBox);
+  wrap.appendChild(contactBox);
+
+  /* start new request button */
+  var newBtn = document.createElement('button');
+  newBtn.className = 'btn-primary';
+  newBtn.style.cssText = 'width:100%;margin-top:0.3rem';
+  newBtn.textContent = 'Start New Request';
+  newBtn.onclick = resetChat;
+  wrap.appendChild(newBtn);
+
+  stage.appendChild(wrap);
+}
+
+function goToStage(s) {
+  document.querySelectorAll('.chat-stage').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('stage-' + s).classList.add('active');
+  currentStage = s;
+}
+
+function resetChat() {
+  customer = null; selectedPolicy = null; selectedService = null; requestId = null;
+  uploadedDocs = {}; selectedIdentityDoc = null;
+  document.getElementById('nicInput').value = '';
+  document.querySelector('.submit-section').style.display = '';
+  goToStage('login');
+}
+
+function showToast(msg, type) {
+  type = type || 'success';
+  var ex = document.querySelector('.toast'); if (ex) ex.remove();
+  var t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 4000);
+}
+
+function addMessage(text, type) {
+  type = type || 'bot';
+  var msgs = document.getElementById('chatMessages');
+  var div = document.createElement('div'); div.className = 'msg ' + type; div.textContent = text;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  var msgs = document.getElementById('chatMessages');
+  var div = document.createElement('div'); div.className = 'typing-indicator'; div.id = 'typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() { var t = document.getElementById('typing'); if (t) t.remove(); }
+
+async function sendMessage() {
+  var input = document.getElementById('chatInput');
+  var message = input.value.trim(); if (!message) return;
+  addMessage(message, 'user'); input.value = ''; input.style.height = 'auto'; showTyping();
+  try {
+    var session = {service_type:selectedService, policy_number:selectedPolicy, request_id:requestId, uploaded_docs:uploadedDocs};
+    var res = await fetch(API + '/chat', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:message, customer:customer, session:session})});
+    var data = await res.json();
+    removeTyping();
+    if (data.success) {
+      var reply = data.reply; var showSvcBtn = false;
+      if (reply.includes('[ACTION:START_SERVICE]')) { reply = reply.replace('[ACTION:START_SERVICE]','').trim(); showSvcBtn = true; }
+      reply = reply.replace(/\[ACTION:[^\]]*\]/g,'').trim();
+      addMessage(reply, 'bot');
+      if (showSvcBtn) {
+        var msgs = document.getElementById('chatMessages');
+        var div = document.createElement('div'); div.className = 'msg bot';
+        div.innerHTML = '<div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">' +
+          '<button onclick="goToStage(\'service\')" style="background:var(--gold);color:var(--deep);border:none;border-radius:8px;padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:left">✏️ Name Change</button>' +
+          '<button onclick="goToStage(\'service\')" style="background:var(--gold);color:var(--deep);border:none;border-radius:8px;padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:left">📅 Age Alteration</button>' +
+          '<button onclick="goToStage(\'service\')" style="background:var(--gold);color:var(--deep);border:none;border-radius:8px;padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:left">💳 Change Payment Mode</button>' +
+          '<button onclick="goToStage(\'service\')" style="background:var(--gold);color:var(--deep);border:none;border-radius:8px;padding:8px 14px;font-size:0.82rem;font-weight:600;cursor:pointer;text-align:left">📈 Increase of Benefits</button>' +
+          '</div>';
+        msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+      }
+    } else { addMessage('Sorry, I could not process your message. Please try again.', 'bot'); }
+  } catch(e) { removeTyping(); addMessage('Connection error. Please check your internet and try again.', 'bot'); }
+}
+
+function showChatStage() {
+  goToStage('chat');
+  var msgs = document.getElementById('chatMessages');
+
+  // Add back button above chat messages
+  var existing = document.getElementById('chatBackBtn');
+  if (!existing) {
+    var backBtn = document.createElement('div');
+    backBtn.id = 'chatBackBtn';
+    backBtn.style.cssText = 'padding:0.5rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:6px;';
+    backBtn.innerHTML = '<button onclick="goToStage(\'service\')" style="background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.3);color:var(--gold);padding:4px 12px;border-radius:8px;font-size:0.78rem;cursor:pointer;font-family:DM Sans,sans-serif;">← Back to Services</button>';
+    msgs.parentElement.insertBefore(backBtn, msgs);
+  }
+
+  if (msgs.children.length === 0) {
+    addMessage('Hello ' + (customer && customer.full_name ? customer.full_name.split(' ')[0] : 'there') + '! 👋 I\'m JanashakthiCare, your Janashakthi AI assistant. How can I help you today?', 'bot');
+  }
+}
+
+setTimeout(function(){ document.getElementById('chatBadge').style.display = 'flex'; }, 3000);
+</script>
+</body>
+</html>

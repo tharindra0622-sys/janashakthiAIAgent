@@ -1,0 +1,5 @@
+.env
+janashakthi/database/janashakthi.db
+janashakthi/uploads/
+__pycache__/
+*.pyc

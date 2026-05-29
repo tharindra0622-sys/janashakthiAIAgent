@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Janashakthi — Underwriter Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9973A;
+    --gold-light: #E8C06A;
+    --deep: #0D1117;
+    --navy: #13192B;
+    --surface: #1C2535;
+    --card: #232E42;
+    --text: #E8EAF0;
+    --muted: #7B8FB7;
+    --success: #27AE60;
+    --error: #E74C3C;
+    --warning: #F39C12;
+    --info: #3498DB;
+    --border: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    background: var(--navy);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 0;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-logo .name {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.1rem;
+  }
+
+  .sidebar-logo .sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-logo .role {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    background: rgba(201,151,58,0.15);
+    color: var(--gold);
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  nav.sidebar-nav {
+    flex: 1;
+    padding: 0 0.75rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--muted);
+    transition: all 0.2s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: rgba(201,151,58,0.1);
+    color: var(--gold);
+  }
+
+  .nav-item .icon { font-size: 1.1rem; width: 24px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--error);
+    color: white;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .refresh-btn {
+    background: rgba(201,151,58,0.1);
+    border: 1px solid rgba(201,151,58,0.3);
+    color: var(--gold);
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .refresh-btn:hover { background: rgba(201,151,58,0.2); }
+
+  /* CONTENT */
+  .content {
+    padding: 2rem;
+    flex: 1;
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem;
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .stat-value.pending { color: var(--warning); }
+  .stat-value.approved { color: var(--success); }
+  .stat-value.rejected { color: var(--error); }
+  .stat-value.gold { color: var(--gold); }
+
+  /* REQUESTS TABLE */
+  .table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 0.8rem 1.5rem;
+    text-align: left;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: rgba(0,0,0,0.1);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+
+  td {
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(201,151,58,0.03); }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .status-badge.pending { background: rgba(243,156,18,0.15); color: var(--warning); }
+  .status-badge.approved { background: rgba(39,174,96,0.15); color: var(--success); }
+  .status-badge.rejected { background: rgba(231,76,60,0.15); color: var(--error); }
+  .status-badge.review { background: rgba(52,152,219,0.15); color: var(--info); }
+
+  .type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .type-badge.financial { background: rgba(231,76,60,0.1); color: #E74C3C; }
+  .type-badge.non-financial { background: rgba(39,174,96,0.1); color: #27AE60; }
+
+  .action-btn {
+    padding: 5px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+  }
+  .action-btn.review { background: rgba(52,152,219,0.2); color: var(--info); border: 1px solid rgba(52,152,219,0.3); }
+  .action-btn.review:hover { background: rgba(52,152,219,0.35); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--navy);
+    border: 1px solid rgba(201,151,58,0.2);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--navy);
+    z-index: 10;
+  }
+
+  .modal-header h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.3rem;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 1.5rem 2rem; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-item {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+  }
+
+  .info-item .label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+
+  .info-item .value {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    margin-top: 1.2rem;
+  }
+
+  .doc-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .doc-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .doc-item.verified { border-left: 3px solid var(--success); }
+  .doc-item.unverified { border-left: 3px solid var(--error); }
+
+  .doc-item-info .doc-type { font-size: 0.875rem; font-weight: 600; }
+  .doc-item-info .doc-feedback { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  .view-doc-btn {
+    background: rgba(52,152,219,0.15);
+    color: var(--info);
+    border: none;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .view-doc-btn:hover { background: rgba(52,152,219,0.3); }
+
+  .decision-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .decision-section h4 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .notes-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    color: var(--text);
+    font-size: 0.875rem;
+    font-family: 'DM Sans', sans-serif;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .notes-input:focus { border-color: var(--gold); }
+
+  .extra-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: var(--text);
+    font-size: 0.875rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .extra-input:focus { border-color: var(--gold); }
+  .extra-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }
+
+  .decision-btns {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .approve-btn {
+    flex: 1;
+    background: rgba(39,174,96,0.15);
+    color: var(--success);
+    border: 1px solid rgba(39,174,96,0.4);
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .approve-btn:hover { background: rgba(39,174,96,0.3); }
+
+  .reject-btn {
+    flex: 1;
+    background: rgba(231,76,60,0.15);
+    color: var(--error);
+    border: 1px solid rgba(231,76,60,0.4);
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .reject-btn:hover { background: rgba(231,76,60,0.3); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    z-index: 9999;
+    font-size: 0.875rem;
+    max-width: 320px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: toastIn 0.3s ease;
+  }
+  @keyframes toastIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+  .toast.success { border-color: rgba(39,174,96,0.4); color: var(--success); }
+  .toast.error { border-color: rgba(231,76,60,0.4); color: var(--error); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,151,58,0.2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div style="font-size:2rem;margin-bottom:8px">🔥</div>
+    <div class="name">Janashakthi</div>
+    <div class="sub">Insurance PLC</div>
+    <div class="role">🛡️ Underwriter</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="loadRequests('Under Review')">
+      <span class="icon">📋</span>
+      Pending Reviews
+      <span class="nav-badge" id="pendingBadge">0</span>
+    </div>
+    <div class="nav-item" onclick="loadRequests('Approved')">
+      <span class="icon">✅</span>
+      Approved
+    </div>
+    <div class="nav-item" onclick="loadRequests('Rejected')">
+      <span class="icon">❌</span>
+      Rejected
+    </div>
+    <div class="nav-item" onclick="loadRequests('Auto-Approved')">
+      <span class="icon">⚡</span>
+      Auto-Approved
+      <span class="nav-badge" id="autoApprovedBadge" style="background:var(--success)">0</span>
+    </div>
+    <div class="nav-item" style="margin-top:1rem" onclick="loadRequests('Pending')">
+      <span class="icon">⏳</span>
+      All Pending
+    </div>
+    <div class="nav-item" onclick="window.open('/', '_blank')">
+      <span class="icon">🌐</span>
+      Customer Portal
+    </div>
+  </nav>
+
+  <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--muted);">
+    <div>Last updated:</div>
+    <div id="lastUpdated" style="color:var(--gold)">—</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Pending Reviews</h1>
+    <div class="topbar-actions">
+      <select class="filter-select" id="statusFilter" onchange="loadRequests(this.value)">
+        <option value="Under Review">Under Review</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Auto-Approved">Auto-Approved</option>
+        <option value="Pending">Pending</option>
+      </select>
+      <button class="refresh-btn" onclick="refreshAll()">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-value pending" id="statPending">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Approved</div>
+        <div class="stat-value approved" id="statApproved">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Auto-Approved</div>
+        <div class="stat-value" style="color:var(--success)" id="statAutoApproved">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value rejected" id="statRejected">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Customers</div>
+        <div class="stat-value gold" id="statCustomers">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Policies</div>
+        <div class="stat-value gold" id="statPolicies">—</div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+      <div class="table-header">
+        <h3>Service Requests</h3>
+        <span id="requestCount" style="font-size:0.8rem;color:var(--muted)">Loading...</span>
+      </div>
+      <div id="tableBody">
+        <div class="empty-state">
+          <div class="icon">⏳</div>
+          <p>Loading requests...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Review Request</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">Loading...</div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:5001/api';
+let currentRequestId = null;
+
+const SERVICE_LABELS = {
+  name_change: 'Name Change',
+  age_alteration: 'Age Alteration',
+  premium_mode_change: 'Change Payment Mode',
+  increase_benefits: 'Increase of Benefits'
+};
+
+const SERVICE_CAT = {
+  name_change: 'non-financial',
+  age_alteration: 'non-financial',
+  premium_mode_change: 'financial',
+  increase_benefits: 'financial'
+};
+
+async function loadStats() {
+  const res = await fetch(`${API}/underwriter/stats`);
+  const data = await res.json();
+  if (data.success) {
+    const s = data.stats;
+    document.getElementById('statPending').textContent = s.pending;
+    document.getElementById('statApproved').textContent = s.approved;
+    document.getElementById('statRejected').textContent = s.rejected;
+    document.getElementById('statAutoApproved').textContent = s.auto_approved || 0;
+    document.getElementById('statCustomers').textContent = s.total_customers;
+    document.getElementById('statPolicies').textContent = s.total_policies;
+    document.getElementById('pendingBadge').textContent = s.pending;
+    document.getElementById('autoApprovedBadge').textContent = s.auto_approved || 0;
+  }
+}
+
+async function loadRequests(status = 'Under Review') {
+  document.getElementById('pageTitle').textContent =
+    status === 'Under Review' ? 'Pending Reviews' :
+    status === 'Approved' ? 'Approved Requests' :
+    status === 'Rejected' ? 'Rejected Requests' :
+    status === 'Auto-Approved' ? 'Auto-Approved Requests' : 'All Pending';
+
+  document.getElementById('tableBody').innerHTML = `
+    <div class="empty-state"><div class="icon">⏳</div><p>Loading...</p></div>
+  `;
+
+  const res = await fetch(`${API}/underwriter/requests?status=${encodeURIComponent(status)}`);
+  const data = await res.json();
+
+  if (!data.success || data.requests.length === 0) {
+    document.getElementById('tableBody').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>No requests found for this status.</p>
+      </div>
+    `;
+    document.getElementById('requestCount').textContent = '0 requests';
+    return;
+  }
+
+  document.getElementById('requestCount').textContent = `${data.requests.length} requests`;
+
+  const rows = data.requests.map(r => {
+    const cat = SERVICE_CAT[r.service_type] || 'non-financial';
+    const statusLabel = r.status === 'Under Review' ? 'Under Review' : r.status;
+    const statusClass = r.status === 'Under Review' ? 'review' :
+                        r.status === 'Approved' ? 'approved' :
+                        r.status === 'Rejected' ? 'rejected' :
+                        r.status === 'Auto-Approved' ? 'approved' : 'pending';
+
+    return `
+      <tr>
+        <td><strong style="color:var(--gold)">#${r.id}</strong></td>
+        <td>${r.full_name}<br><span style="font-size:0.75rem;color:var(--muted)">${r.nic}</span></td>
+        <td><code style="font-size:0.82rem;color:var(--gold-light)">${r.policy_number}</code></td>
+        <td>
+          <div>${SERVICE_LABELS[r.service_type] || r.service_type}</div>
+          <span class="type-badge ${cat}">${cat}</span>
+        </td>
+        <td><span class="status-badge ${statusClass}">● ${statusLabel}</span></td>
+        <td style="font-size:0.8rem;color:var(--muted)">${formatDate(r.created_at)}</td>
+        <td>
+          <button class="action-btn review" onclick="openReview('${r.id}')">
+            🔍 Review
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('tableBody').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Customer</th>
+          <th>Policy</th>
+          <th>Service</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+async function openReview(requestId) {
+  currentRequestId = requestId;
+  document.getElementById('reviewModal').classList.add('open');
+  document.getElementById('modalBody').innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading...</p></div>';
+
+  const res = await fetch(`${API}/underwriter/request/${requestId}`);
+  const data = await res.json();
+
+  if (!data.success) {
+    document.getElementById('modalBody').innerHTML = '<p style="color:var(--error)">Failed to load request details.</p>';
+    return;
+  }
+
+  const r = data.request;
+  const docs = data.documents;
+  const serviceLabel = SERVICE_LABELS[r.service_type] || r.service_type;
+  const cat = SERVICE_CAT[r.service_type];
+
+  document.getElementById('modalTitle').textContent = `Review — #${r.id} | ${serviceLabel}`;
+
+  let extraFields = '';
+  if (r.service_type === 'premium_mode_change') {
+    extraFields = `
+      <div class="extra-label">New Payment Mode (if approving):</div>
+      <select class="extra-input" id="newValue">
+        <option>Monthly</option>
+        <option>Quarterly</option>
+        <option>Semi-Annual</option>
+        <option>Annual</option>
+      </select>
+    `;
+  } else if (r.service_type === 'increase_benefits') {
+    extraFields = `
+      <div class="extra-label">New Sum Assured Amount (LKR, if approving):</div>
+      <input class="extra-input" id="newValue" type="number" placeholder="e.g. 750000">
+    `;
+  }
+
+  const docItems = docs.map(d => {
+    let feedback = '';
+    try {
+      const ai = JSON.parse(d.ai_feedback || '{}');
+      feedback = ai.feedback || '';
+    } catch(e) {}
+
+    const isVerified = d.ai_verified;
+    const docLabel = d.doc_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const filename = d.file_path.split('/').pop();
+
+    return `
+      <div class="doc-item ${isVerified ? 'verified' : 'unverified'}">
+        <div class="doc-item-info">
+          <div class="doc-type">${isVerified ? '✅' : '❌'} ${docLabel}</div>
+          <div class="doc-feedback">${feedback || 'AI verification ' + (isVerified ? 'passed' : 'failed')}</div>
+        </div>
+        <a href="${API.replace('/api','')}/uploads/${filename}" target="_blank" class="view-doc-btn">
+          👁 View
+        </a>
+      </div>
+    `;
+  }).join('');
+
+  const canDecide = r.status === 'Under Review' || r.status === 'Pending';
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="info-grid">
+      <div class="info-item"><div class="label">Customer Name</div><div class="value">${r.full_name}</div></div>
+      <div class="info-item"><div class="label">NIC</div><div class="value">${r.nic}</div></div>
+      <div class="info-item"><div class="label">Phone</div><div class="value">${r.phone || '—'}</div></div>
+      <div class="info-item"><div class="label">Email</div><div class="value">${r.email || '—'}</div></div>
+      <div class="info-item"><div class="label">Policy Number</div><div class="value" style="color:var(--gold)">${r.policy_number}</div></div>
+      <div class="info-item"><div class="label">Plan / Branch</div><div class="value">${r.plan} / ${r.branch}</div></div>
+      <div class="info-item"><div class="label">Current Premium Mode</div><div class="value">${r.premium_mode}</div></div>
+      <div class="info-item"><div class="label">Sum Assured</div><div class="value">LKR ${Number(r.sum_assured || 0).toLocaleString()}</div></div>
+      <div class="info-item"><div class="label">Service Type</div>
+        <div class="value">${serviceLabel} <span class="type-badge ${cat}">${cat}</span></div>
+      </div>
+      <div class="info-item"><div class="label">Current Status</div>
+        <div class="value">
+          <span class="status-badge ${r.status === 'Under Review' ? 'review' : r.status.toLowerCase()}">
+            ● ${r.status}
+          </span>
+        </div>
+      </div>
+      <div class="info-item"><div class="label">Submitted</div><div class="value">${formatDate(r.created_at)}</div></div>
+      <div class="info-item"><div class="label">Address</div><div class="value">${r.address || '—'}</div></div>
+    </div>
+
+    <div class="section-title">Uploaded Documents (${docs.length})</div>
+    <div class="doc-list">${docItems || '<p style="color:var(--muted);font-size:0.85rem">No documents uploaded.</p>'}</div>
+
+    ${r.underwriter_notes ? `
+      <div class="section-title" style="margin-top:1rem">Previous Underwriter Notes</div>
+      <div style="background:var(--surface);border-radius:10px;padding:0.8rem 1rem;font-size:0.85rem;color:var(--muted)">
+        ${r.underwriter_notes}
+      </div>
+    ` : ''}
+
+    ${canDecide ? `
+      <div class="decision-section">
+        <h4>Underwriter Decision</h4>
+        ${extraFields}
+        <textarea class="notes-input" id="uwNotes" placeholder="Add notes for the customer (visible if rejected, or for records)..."></textarea>
+        <div class="decision-btns">
+          <button class="approve-btn" onclick="makeDecision('Approved')">✅ Approve Request</button>
+          <button class="reject-btn" onclick="makeDecision('Rejected')">❌ Reject Request</button>
+        </div>
+      </div>
+    ` : `
+      <div style="margin-top:1.5rem;padding:1rem;background:var(--surface);border-radius:10px;text-align:center;color:var(--muted);font-size:0.85rem">
+        This request has already been processed (${r.status}).
+      </div>
+    `}
+  `;
+}
+
+async function makeDecision(decision) {
+  const notes = document.getElementById('uwNotes')?.value || '';
+  const newValueEl = document.getElementById('newValue');
+  const newValue = newValueEl?.value || null;
+
+  const body = {
+    request_id: currentRequestId,
+    decision,
+    notes,
+    new_value: newValue
+  };
+
+  const res = await fetch(`${API}/underwriter/decide`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    showToast(data.message, 'success');
+    closeModal();
+    refreshAll();
+  } else {
+    showToast(data.error || 'Error processing decision.', 'error');
+  }
+}
+
+function closeModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+  currentRequestId = null;
+}
+
+function formatDate(dt) {
+  if (!dt) return '—';
+  const d = new Date(dt);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function refreshAll() {
+  const status = document.getElementById('statusFilter').value;
+  loadStats();
+  loadRequests(status);
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+}
+
+function showToast(msg, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// Init
+refreshAll();
+setInterval(refreshAll, 30000); // auto-refresh every 30s
+</script>
+</body>
+</html>
